@@ -3,7 +3,7 @@ import { Cookie, parse as parseCookie } from 'set-cookie-parser'
 type Store = Map<string, StoreEntry>
 type StoreEntry = Map<string, Cookie>
 
-const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
+export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
 class CookieStore {
   private store: Store
