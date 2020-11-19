@@ -46,17 +46,21 @@ class CookieStore {
    */
   get(request: Request): StoreEntry {
     const requestUrl = new URL(request.url)
-    const originCookies = this.store.get(requestUrl.origin)
+    const originCookies = this.store.get(requestUrl.origin) || new Map()
 
     switch (request.credentials) {
       case 'include': {
-        // Get parsed `document.cookie`
-        // Get virtual cookies
-        throw new Error('"include" credentials policy is not implemented!')
+        const documentCookies = parseCookie(document.cookie)
+
+        documentCookies.forEach((cookie) => {
+          originCookies.set(cookie.name, cookie)
+        })
+
+        return originCookies
       }
 
       case 'same-origin': {
-        return originCookies || new Map()
+        return originCookies
       }
 
       default:
