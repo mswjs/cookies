@@ -1,6 +1,6 @@
 [![Latest version](https://img.shields.io/npm/v/virtual-cookies.svg)](https://www.npmjs.com/package/virtual-cookies)
 
-# Cookie Store
+# `virtual-cookies`
 
 Virtual cookie store to manage request/response cookies associations in a unique collection.
 
@@ -31,9 +31,27 @@ store.get(new Request('https://mswjs.io'))
 
 > `.get()` respects the `req.credentials` policy.
 
+Executing this command returns a `Map` instance with the request cookies:
+
+```js
+Map {
+  "id" => { name: "id", value: "abc-123" }
+}
+```
+
 ### `getAll()`
 
 Returns all the cookies in the store.
+
+Executing `.getAll()` method returns a `Map` instance with request cookies grouped by request origin.
+
+```js
+Map {
+  "https://mswjs.io" => Map {
+    "id" => { name: "id", value: "abc-123" }
+  }
+}
+```
 
 ### `deleteAll(req: Request)`
 
