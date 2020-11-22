@@ -40,10 +40,20 @@ class CookieStore {
       return
     }
 
-    const parsedResponseCookies = parseCookie(responseCookies)
+    const now = Date.now()
+    const parsedResponseCookies = parseCookie(responseCookies).map(
+      ({ maxAge, ...cookie }) => ({
+        ...cookie,
+        expires:
+          maxAge === undefined
+            ? cookie.expires
+            : new Date(now + maxAge * 1000),
+        maxAge,
+      })
+    ).filter(({ expires }) => expires === undefined || expires.getTime() > now)
 
     const prevCookies =
-      this.store.get(requestUrl.origin) || (new Map() as StoreEntry)
+      this.store.get(requestUrl.origin) || new Map<string, Cookie>()
 
     parsedResponseCookies.forEach((cookie) => {
       this.store.set(requestUrl.origin, prevCookies.set(cookie.name, cookie))
@@ -55,8 +65,10 @@ class CookieStore {
    * and its `request.credentials` policy.
    */
   get(request: RequestLike): StoreEntry {
+    this.deleteExpiredCookies()
+
     const requestUrl = new URL(request.url)
-    const originCookies = this.store.get(requestUrl.origin) || new Map()
+    const originCookies = this.store.get(requestUrl.origin) || new Map<string, Cookie>()
 
     switch (request.credentials) {
       case 'include': {
@@ -82,6 +94,8 @@ class CookieStore {
    * Returns a collection of all stored cookies.
    */
   getAll(): Store {
+    this.deleteExpiredCookies()
+
     return this.store
   }
 
@@ -137,6 +151,22 @@ class CookieStore {
     )
 
     localStorage.setItem(PERSISTENCY_KEY, JSON.stringify(serializedCookies))
+  }
+
+  private deleteExpiredCookies() {
+    const now = Date.now()
+
+    this.store.forEach((originCookies, origin) => {
+      originCookies.forEach(({ expires, name }) => {
+        if (expires !== undefined && expires.getTime() <= now) {
+          originCookies.delete(name)
+        }
+      })
+
+      if (originCookies.size === 0) {
+        this.store.delete(origin)
+      }
+    })
   }
 }
 
