@@ -125,13 +125,20 @@ class CookieStore {
     const persistedCookies = localStorage.getItem(PERSISTENCY_KEY)
 
     if (persistedCookies) {
-      const parsedCookies: [string, [string, any]] = JSON.parse(
-        persistedCookies
-      )
-
-      parsedCookies.forEach(([origin, cookie]) => {
-        this.store.set(origin, new Map(cookie))
-      })
+      try{
+        const parsedCookies: [string, [string, any]] = JSON.parse(
+          persistedCookies
+        )
+  
+        parsedCookies.forEach(([origin, cookie]) => {
+          this.store.set(origin, new Map(cookie))
+        })
+      }catch(_){
+        console.warn(`[MSW] the storage used for cookies has an invalid value "${localStorage.getItem(PERSISTENCY_KEY)}".
+This key is used internally by MSW to store cookies.`)
+        localStorage.removeItem(PERSISTENCY_KEY)
+      }
+      
     }
   }
 
