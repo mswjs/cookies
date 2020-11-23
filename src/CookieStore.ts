@@ -101,20 +101,27 @@ class CookieStore {
     const persistedCookies = localStorage.getItem(PERSISTENCY_KEY)
 
     if (persistedCookies) {
-      try{
+      try {
         const parsedCookies: [string, [string, any]] = JSON.parse(
-          persistedCookies
+          persistedCookies,
         )
-  
+
         parsedCookies.forEach(([origin, cookie]) => {
           this.store.set(origin, new Map(cookie))
         })
-      }catch(_){
-        console.warn(`[MSW] the storage used for cookies has an invalid value "${localStorage.getItem(PERSISTENCY_KEY)}".
-This key is used internally by MSW to store cookies.`)
+      } catch (error) {
+        console.warn(`
+[virtual-cookie] Failed to parse a stored cookie from the localStorage (key "${PERSISTENCY_KEY}").
+
+Stored value:
+${localStorage.getItem(PERSISTENCY_KEY)}
+
+Thrown exception:
+${error}
+
+Invalid value has been removed from localStorage to prevent subsequent failed parsing attempts.`)
         localStorage.removeItem(PERSISTENCY_KEY)
       }
-      
     }
   }
 
@@ -130,7 +137,7 @@ This key is used internally by MSW to store cookies.`)
     const serializedCookies = Array.from(this.store.entries()).map(
       ([origin, cookies]) => {
         return [origin, Array.from(cookies.entries())]
-      }
+      },
     )
 
     localStorage.setItem(PERSISTENCY_KEY, JSON.stringify(serializedCookies))
