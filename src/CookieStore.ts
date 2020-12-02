@@ -1,5 +1,15 @@
 import { Cookie, parse as parseCookie } from 'set-cookie-parser'
 
+interface RequestLike {
+    credentials: Request['credentials'];
+    url: string;
+}
+interface HeadersLike {
+    get(name: string): string | null;
+}
+interface ResponseLike {
+    headers: HeadersLike;
+}
 type Store = Map<string, StoreEntry>
 type StoreEntry = Map<string, Cookie>
 
@@ -18,7 +28,7 @@ class CookieStore {
    * Sets the given request cookies into the store.
    * Respects the `request.credentials` policy.
    */
-  add(request: Request, response: Response): void {
+  add(request: RequestLike, response: ResponseLike): void {
     if (request.credentials === 'omit') {
       return
     }
@@ -44,7 +54,7 @@ class CookieStore {
    * Returns cookies relevant to the given request
    * and its `request.credentials` policy.
    */
-  get(request: Request): StoreEntry {
+  get(request: RequestLike): StoreEntry {
     const requestUrl = new URL(request.url)
     const originCookies = this.store.get(requestUrl.origin) || new Map()
 
@@ -78,7 +88,7 @@ class CookieStore {
   /**
    * Deletes all cookies associated with the given request.
    */
-  deleteAll(request: Request): void {
+  deleteAll(request: RequestLike): void {
     const requestUrl = new URL(request.url)
     this.store.delete(requestUrl.origin)
   }
