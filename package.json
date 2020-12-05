@@ -1,6 +1,6 @@
 {
   "name": "virtual-cookies",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Virtual cookies store to manage Request/Response associations.",
   "main": "lib/index.js",
   "scripts": {
