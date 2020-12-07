@@ -1,8 +1,14 @@
 [![Latest version](https://img.shields.io/npm/v/virtual-cookies.svg)](https://www.npmjs.com/package/virtual-cookies)
 
-# `virtual-cookies`
+# Cookies
 
-Virtual cookie store to manage request/response cookies associations in a unique collection.
+Virtual cookie store for managing request/response cookies relations in a unique collection.
+
+## Install
+
+```bash
+$ npm install @mswjs/cookies
+```
 
 ## API
 
@@ -17,7 +23,7 @@ store.set(
     headers: new Headers({
       'set-cookie': 'id=abc-123',
     }),
-  })
+  }),
 )
 ```
 
