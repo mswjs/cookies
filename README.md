@@ -1,4 +1,4 @@
-[![Latest version](https://img.shields.io/npm/v/virtual-cookies.svg)](https://www.npmjs.com/package/virtual-cookies)
+[![Latest version](https://img.shields.io/npm/v/@mswjs/cookies.svg)](https://www.npmjs.com/package/@mswjs/cookies)
 
 # Cookies
 
