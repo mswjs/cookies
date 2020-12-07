@@ -1,5 +1,5 @@
 {
-  "name": "virtual-cookies",
+  "name": "@mswjs/cookies",
   "version": "0.1.2",
   "description": "Virtual cookies store to manage Request/Response associations.",
   "main": "lib/index.js",
