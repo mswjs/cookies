@@ -12,6 +12,7 @@ interface ResponseLike {
 }
 type Store = Map<string, StoreEntry>
 type StoreEntry = Map<string, Cookie>
+type CookieString = Omit<Cookie, 'expires'> & { expires?: string };
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
@@ -126,12 +127,15 @@ class CookieStore {
 
     if (persistedCookies) {
       try {
-        const parsedCookies: [string, [string, any]] = JSON.parse(
+        const parsedCookies: [string, [string, CookieString][]][] = JSON.parse(
           persistedCookies,
         )
 
-        parsedCookies.forEach(([origin, cookie]) => {
-          this.store.set(origin, new Map(cookie))
+        parsedCookies.forEach(([origin, cookies]) => {
+          this.store.set(origin, new Map(cookies.map(([ token, { expires, ...cookie }]) => [
+            token,
+            expires === undefined ? cookie : { ...cookie, expires: new Date(expires) }
+          ])));
         })
       } catch (error) {
         console.warn(`
