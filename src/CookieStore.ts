@@ -51,7 +51,7 @@ class CookieStore {
             : new Date(now + maxAge * 1000),
         maxAge,
       })
-    ).filter(({ expires }) => expires === undefined || expires.getTime() > now)
+    )
 
     const prevCookies =
       this.store.get(requestUrl.origin) || new Map<string, Cookie>()

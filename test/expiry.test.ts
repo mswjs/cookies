@@ -137,3 +137,51 @@ test('returns cookies before the max age', async () => {
     ['cookieName', { expires, name: 'cookieName', maxAge: 2, value: 'abc-123' }],
   ])
 })
+
+test('deletes an existing cookie when setting a cookie with the same name and expiration date in the past', () => {
+  const req = new Request('https://mswjs.io')
+
+  store.add(req, new Response(null, {
+    headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
+  }))
+
+  const date = new Date()
+  date.setSeconds(date.getSeconds() - 2)
+  const res = new Response(null, {
+    headers: new Headers({ 'set-cookie': `cookieName=abc-123; Expires=${ date.toUTCString() }` }),
+  })
+
+  store.add(req, res)
+
+  // Assert cookie entry has been deleted.
+  const allCookies = store.getAll()
+  const allCookiesList = Array.from(allCookies.entries())
+  expect(allCookiesList).toHaveLength(0)
+
+  // Assert the cookie can't be retrieved given a matching request.
+  const reqCookies = store.get(req)
+  expect(reqCookies.size).toBe(0)
+})
+
+test('deletes an existing cookie when setting a cookie with the same name and a max age of 0', () => {
+  const req = new Request('https://mswjs.io')
+
+  store.add(req, new Response(null, {
+    headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
+  }))
+
+  const res = new Response(null, {
+    headers: new Headers({ 'set-cookie': 'cookieName=abc-123; Max-Age=0' }),
+  })
+
+  store.add(req, res)
+
+  // Assert cookie entry has been deleted.
+  const allCookies = store.getAll()
+  const allCookiesList = Array.from(allCookies.entries())
+  expect(allCookiesList).toHaveLength(0)
+
+  // Assert the cookie can't be retrieved given a matching request.
+  const reqCookies = store.get(req)
+  expect(reqCookies.size).toBe(0)
+})
