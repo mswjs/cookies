@@ -14,8 +14,7 @@ test('does not add expired cookies', () => {
 
   // Assert cookie entry has not been added.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
@@ -32,8 +31,7 @@ test('does not add cookies with a max age of zero', () => {
 
   // Assert cookie entry has not been added.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
@@ -54,8 +52,7 @@ test('does not return expired cookies', async () => {
 
   // Assert cookie entry has been deleted.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
@@ -74,8 +71,7 @@ test('does not return cookies after the max age', async () => {
 
   // Assert cookie entry has been deleted.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
@@ -155,8 +151,7 @@ test('deletes an existing cookie when setting a cookie with the same name and ex
 
   // Assert cookie entry has been deleted.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
@@ -178,8 +173,7 @@ test('deletes an existing cookie when setting a cookie with the same name and a 
 
   // Assert cookie entry has been deleted.
   const allCookies = store.getAll()
-  const allCookiesList = Array.from(allCookies.entries())
-  expect(allCookiesList).toHaveLength(0)
+  expect(allCookies.size).toBe(0)
 
   // Assert the cookie can't be retrieved given a matching request.
   const reqCookies = store.get(req)
