@@ -16,13 +16,13 @@ type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
+const SUPPORTS_LOCAL_STORAGE = typeof localStorage !== 'undefined'
+
 class CookieStore {
   private store: Store
-  private supportsPersistency: boolean
 
   constructor() {
     this.store = new Map()
-    this.supportsPersistency = typeof window !== 'undefined'
   }
 
   /**
@@ -115,10 +115,10 @@ class CookieStore {
   }
 
   /**
-   * Hydrates the virtual cookie store from the `localStorage`.
+   * Hydrates the virtual cookie store from the `localStorage` if defined.
    */
   hydrate(): void {
-    if (!this.supportsPersistency) {
+    if (!SUPPORTS_LOCAL_STORAGE) {
       return
     }
 
@@ -160,11 +160,11 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
   }
 
   /**
-   * Persists the current virtual cookies into the `localStorage`,
+   * Persists the current virtual cookies into the `localStorage` if defined,
    * so they are available on the next page load.
    */
   persist(): void {
-    if (!this.supportsPersistency) {
+    if (!SUPPORTS_LOCAL_STORAGE) {
       return
     }
 
