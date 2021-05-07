@@ -2,6 +2,7 @@ import { store, PERSISTENCY_KEY } from '../src'
 
 afterEach(() => {
   store.clear()
+  localStorage.clear()
 })
 
 test('hydrates cookies from localStorage', () => {
