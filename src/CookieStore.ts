@@ -1,18 +1,18 @@
 import { Cookie, parse as parseCookie } from 'set-cookie-parser'
 
 interface RequestLike {
-    credentials: Request['credentials'];
-    url: string;
+  credentials: Request['credentials']
+  url: string
 }
 interface HeadersLike {
-    get(name: string): string | null;
+  get(name: string): string | null
 }
 interface ResponseLike {
-    headers: HeadersLike;
+  headers: HeadersLike
 }
 type Store = Map<string, StoreEntry>
 type StoreEntry = Map<string, Cookie>
-type CookieString = Omit<Cookie, 'expires'> & { expires?: string };
+type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
@@ -46,11 +46,9 @@ class CookieStore {
       ({ maxAge, ...cookie }) => ({
         ...cookie,
         expires:
-          maxAge === undefined
-            ? cookie.expires
-            : new Date(now + maxAge * 1000),
+          maxAge === undefined ? cookie.expires : new Date(now + maxAge * 1000),
         maxAge,
-      })
+      }),
     )
 
     const prevCookies =
@@ -69,7 +67,8 @@ class CookieStore {
     this.deleteExpiredCookies()
 
     const requestUrl = new URL(request.url)
-    const originCookies = this.store.get(requestUrl.origin) || new Map<string, Cookie>()
+    const originCookies =
+      this.store.get(requestUrl.origin) || new Map<string, Cookie>()
 
     switch (request.credentials) {
       case 'include': {
@@ -132,10 +131,17 @@ class CookieStore {
         )
 
         parsedCookies.forEach(([origin, cookies]) => {
-          this.store.set(origin, new Map(cookies.map(([ token, { expires, ...cookie }]) => [
-            token,
-            expires === undefined ? cookie : { ...cookie, expires: new Date(expires) }
-          ])));
+          this.store.set(
+            origin,
+            new Map(
+              cookies.map(([token, { expires, ...cookie }]) => [
+                token,
+                expires === undefined
+                  ? cookie
+                  : { ...cookie, expires: new Date(expires) },
+              ]),
+            ),
+          )
         })
       } catch (error) {
         console.warn(`
@@ -176,7 +182,7 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
 
     this.store.forEach((originCookies, origin) => {
       originCookies.forEach(({ expires, name }) => {
-        if (expires !== undefined && expires.getTime() <= now) {
+        if (expires !== undefined && expires.getTime() <= now) {
           originCookies.delete(name)
         }
       })

@@ -5,7 +5,7 @@ afterEach(() => {
 })
 
 test('hydrates cookies from localStorage', () => {
-  const expires = new Date(Date.now() + 1000);
+  const expires = new Date(Date.now() + 1000)
   localStorage.setItem(
     PERSISTENCY_KEY,
     JSON.stringify([
@@ -13,7 +13,7 @@ test('hydrates cookies from localStorage', () => {
         'https://mswjs.io',
         [['cookieName', { name: 'cookieName', expires, value: 'abc-123' }]],
       ],
-    ])
+    ]),
   )
 
   store.hydrate()
@@ -45,6 +45,6 @@ test('persists cookies in localStorage', () => {
         'https://mswjs.io',
         [['cookieName', { name: 'cookieName', value: 'abc-123' }]],
       ],
-    ])
+    ]),
   )
 })
