@@ -16,7 +16,19 @@ type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
-const SUPPORTS_LOCAL_STORAGE = typeof localStorage !== 'undefined'
+function isLocalStorageSupported() {
+  try {
+    if (typeof localStorage === 'undefined') {
+      return false
+    }
+
+    localStorage.setItem('test', 'test')
+    const item = localStorage.getItem('test')
+    return true
+  } catch (err) {
+    return false
+  }
+}
 
 class CookieStore {
   private store: Store
@@ -118,7 +130,7 @@ class CookieStore {
    * Hydrates the virtual cookie store from the `localStorage` if defined.
    */
   hydrate(): void {
-    if (!SUPPORTS_LOCAL_STORAGE) {
+    if (!isLocalStorageSupported()) {
       return
     }
 
@@ -126,9 +138,8 @@ class CookieStore {
 
     if (persistedCookies) {
       try {
-        const parsedCookies: [string, [string, CookieString][]][] = JSON.parse(
-          persistedCookies,
-        )
+        const parsedCookies: [string, [string, CookieString][]][] =
+          JSON.parse(persistedCookies)
 
         parsedCookies.forEach(([origin, cookies]) => {
           this.store.set(
@@ -164,7 +175,7 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
    * so they are available on the next page load.
    */
   persist(): void {
-    if (!SUPPORTS_LOCAL_STORAGE) {
+    if (!isLocalStorageSupported()) {
       return
     }
 
