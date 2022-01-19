@@ -10,9 +10,10 @@ interface HeadersLike {
 interface ResponseLike {
   headers: HeadersLike
 }
-type Store = Map<string, StoreEntry>
-type StoreEntry = Map<string, Cookie>
-type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
+
+export type Store = Map<string, StoreEntry>
+export type StoreEntry = Map<string, Cookie>
+export type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
@@ -205,4 +206,4 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
   }
 }
 
-export default new CookieStore()
+export const store = new CookieStore()
