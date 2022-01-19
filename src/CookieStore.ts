@@ -10,13 +10,26 @@ interface HeadersLike {
 interface ResponseLike {
   headers: HeadersLike
 }
-type Store = Map<string, StoreEntry>
-type StoreEntry = Map<string, Cookie>
-type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
+
+export type Store = Map<string, StoreEntry>
+export type StoreEntry = Map<string, Cookie>
+export type CookieString = Omit<Cookie, 'expires'> & { expires?: string }
 
 export const PERSISTENCY_KEY = 'MSW_COOKIE_STORE'
 
-const SUPPORTS_LOCAL_STORAGE = typeof localStorage !== 'undefined'
+function supportsLocalStorage() {
+  try {
+    if (localStorage == null) {
+      return false
+    }
+
+    localStorage.setItem('test', 'test')
+    localStorage.getItem('test')
+    return true
+  } catch (error) {
+    return false
+  }
+}
 
 class CookieStore {
   private store: Store
@@ -95,7 +108,6 @@ class CookieStore {
    */
   getAll(): Store {
     this.deleteExpiredCookies()
-
     return this.store
   }
 
@@ -118,33 +130,35 @@ class CookieStore {
    * Hydrates the virtual cookie store from the `localStorage` if defined.
    */
   hydrate(): void {
-    if (!SUPPORTS_LOCAL_STORAGE) {
+    if (!supportsLocalStorage()) {
       return
     }
 
     const persistedCookies = localStorage.getItem(PERSISTENCY_KEY)
 
-    if (persistedCookies) {
-      try {
-        const parsedCookies: [string, [string, CookieString][]][] = JSON.parse(
-          persistedCookies,
-        )
+    if (!persistedCookies) {
+      return
+    }
 
-        parsedCookies.forEach(([origin, cookies]) => {
-          this.store.set(
-            origin,
-            new Map(
-              cookies.map(([token, { expires, ...cookie }]) => [
-                token,
-                expires === undefined
-                  ? cookie
-                  : { ...cookie, expires: new Date(expires) },
-              ]),
-            ),
-          )
-        })
-      } catch (error) {
-        console.warn(`
+    try {
+      const parsedCookies: [string, [string, CookieString][]][] =
+        JSON.parse(persistedCookies)
+
+      parsedCookies.forEach(([origin, cookies]) => {
+        this.store.set(
+          origin,
+          new Map(
+            cookies.map(([token, { expires, ...cookie }]) => [
+              token,
+              expires === undefined
+                ? cookie
+                : { ...cookie, expires: new Date(expires) },
+            ]),
+          ),
+        )
+      })
+    } catch (error) {
+      console.warn(`
 [virtual-cookie] Failed to parse a stored cookie from the localStorage (key "${PERSISTENCY_KEY}").
 
 Stored value:
@@ -154,8 +168,7 @@ Thrown exception:
 ${error}
 
 Invalid value has been removed from localStorage to prevent subsequent failed parsing attempts.`)
-        localStorage.removeItem(PERSISTENCY_KEY)
-      }
+      localStorage.removeItem(PERSISTENCY_KEY)
     }
   }
 
@@ -164,7 +177,7 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
    * so they are available on the next page load.
    */
   persist(): void {
-    if (!SUPPORTS_LOCAL_STORAGE) {
+    if (!supportsLocalStorage()) {
       return
     }
 
@@ -194,4 +207,4 @@ Invalid value has been removed from localStorage to prevent subsequent failed pa
   }
 }
 
-export default new CookieStore()
+export const store = new CookieStore()

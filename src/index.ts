@@ -1,1 +1,1 @@
-export { default as store, PERSISTENCY_KEY } from './CookieStore'
+export * from './CookieStore'
