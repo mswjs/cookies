@@ -18,6 +18,9 @@
     "README.md",
     "lib"
   ],
+  "engines": {
+    "node": ">=16.x"
+  },
   "devDependencies": {
     "@commitlint/cli": "^16.0.3",
     "@commitlint/config-conventional": "^16.0.0",
