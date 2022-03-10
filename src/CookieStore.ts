@@ -4,9 +4,11 @@ interface RequestLike {
   credentials: Request['credentials']
   url: string
 }
+
 interface HeadersLike {
   get(name: string): string | null
 }
+
 interface ResponseLike {
   headers: HeadersLike
 }
