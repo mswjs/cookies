@@ -1,6 +1,6 @@
 {
   "name": "@mswjs/cookies",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Virtual cookies store to manage Request/Response associations.",
   "main": "lib/index.js",
   "scripts": {
