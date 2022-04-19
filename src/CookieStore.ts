@@ -24,9 +24,13 @@ function supportsLocalStorage() {
     if (localStorage == null) {
       return false
     }
+    
+    const testKey = PERSISTENCY_KEY + '_test'
 
-    localStorage.setItem('test', 'test')
-    localStorage.getItem('test')
+    localStorage.setItem(testKey, 'test')
+    localStorage.getItem(testKey)
+    localStorage.removeItem(testKey)
+
     return true
   } catch (error) {
     return false
