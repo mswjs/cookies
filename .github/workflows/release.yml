@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GH_ADMIN_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -16,13 +19,17 @@ jobs:
           node-version: 16.14.0
           cache: yarn
 
+      # Configure the Git user that'd author release commits.
+      - name: Setup Git
+        run: |
+          git config --local user.name "kettanaito"
+          git config --local user.email "kettanaito@gmail.com"
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Publish
         run: yarn release
         env:
-          GIT_COMMITTER_NAME: kettanaito
-          GIT_COMMITTER_EMAIL: kettanaito@gmail.com
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ADMIN_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
