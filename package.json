@@ -9,7 +9,6 @@
     "clean": "rimraf lib",
     "build": "yarn clean && tsc",
     "release": "release publish",
-    "prerelease": "yarn test",
     "prepack": "yarn build",
     "prepare": "yarn simple-git-hooks init",
     "prepublishOnly": "yarn test"
