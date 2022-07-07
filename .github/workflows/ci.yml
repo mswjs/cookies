@@ -9,9 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [14, 16]
     steps:
       - uses: actions/checkout@v3
 
