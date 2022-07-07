@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16.14.0
+          node-version: 16
           cache: yarn
 
       # Configure the Git user that'd author release commits.
