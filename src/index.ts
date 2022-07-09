@@ -1,1 +1,1 @@
-export * from './CookieStore'
+export * from './store'
