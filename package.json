@@ -1,6 +1,6 @@
 {
   "name": "@mswjs/cookies",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Manage request/response cookies in the environments where those are not supported.",
   "main": "lib/index.js",
   "scripts": {
