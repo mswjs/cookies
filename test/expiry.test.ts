@@ -1,13 +1,18 @@
+/**
+ * @jest-environment jsdom
+ */
 import { store } from '../src'
 
 afterEach(() => {
   store.clear()
 })
 
-test('does not add expired cookies', () => {
+it('does not add expired cookies', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123; Expires=${ (new Date()).toUTCString() }` }),
+    headers: new Headers({
+      'set-cookie': `cookieName=abc-123; Expires=${new Date().toUTCString()}`,
+    }),
   })
 
   store.add(req, res)
@@ -21,7 +26,7 @@ test('does not add expired cookies', () => {
   expect(reqCookies.size).toBe(0)
 })
 
-test('does not add cookies with a max age of zero', () => {
+it('does not add cookies with a max age of zero', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123; Max-Age=0' }),
@@ -38,12 +43,14 @@ test('does not add cookies with a max age of zero', () => {
   expect(reqCookies.size).toBe(0)
 })
 
-test('does not return expired cookies', async () => {
+it('does not return expired cookies', async () => {
   const req = new Request('https://mswjs.io')
   const date = new Date()
   date.setSeconds(date.getSeconds() + 2)
   const res = new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123; Expires=${ date.toUTCString() }` }),
+    headers: new Headers({
+      'set-cookie': `cookieName=abc-123; Expires=${date.toUTCString()}`,
+    }),
   })
 
   store.add(req, res)
@@ -59,7 +66,7 @@ test('does not return expired cookies', async () => {
   expect(reqCookies.size).toBe(0)
 })
 
-test('does not return cookies after the max age', async () => {
+it('does not return cookies after the max age', async () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123; Max-Age=1' }),
@@ -78,12 +85,14 @@ test('does not return cookies after the max age', async () => {
   expect(reqCookies.size).toBe(0)
 })
 
-test('returns cookies before they expire', async () => {
+it('returns cookies before they expire', async () => {
   const req = new Request('https://mswjs.io')
   const date = new Date()
   date.setSeconds(date.getSeconds() + 2)
   const res = new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123; Expires=${ date.toUTCString() }` }),
+    headers: new Headers({
+      'set-cookie': `cookieName=abc-123; Expires=${date.toUTCString()}`,
+    }),
   })
 
   store.add(req, res)
@@ -96,17 +105,31 @@ test('returns cookies before they expire', async () => {
   expect(allCookiesList).toHaveLength(1)
   expect(allCookiesList[0][0]).toEqual('https://mswjs.io')
   expect(Array.from(allCookiesList[0][1].entries())).toEqual([
-    ['cookieName', { expires: new Date(date.toUTCString()), name: 'cookieName', value: 'abc-123' }],
+    [
+      'cookieName',
+      {
+        expires: new Date(date.toUTCString()),
+        name: 'cookieName',
+        value: 'abc-123',
+      },
+    ],
   ])
 
   // Assert the cookie can be retrieved given a matching request.
   const reqCookies = store.get(req)
   expect(Array.from(reqCookies.entries())).toEqual([
-    ['cookieName', { expires: new Date(date.toUTCString()), name: 'cookieName', value: 'abc-123' }],
+    [
+      'cookieName',
+      {
+        expires: new Date(date.toUTCString()),
+        name: 'cookieName',
+        value: 'abc-123',
+      },
+    ],
   ])
 })
 
-test('returns cookies before the max age', async () => {
+it('returns cookies before the max age', async () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123; Max-Age=2' }),
@@ -124,27 +147,38 @@ test('returns cookies before the max age', async () => {
   const expires = allCookiesList[0][1].get('cookieName')?.expires
   expect(expires?.getTime()).toBeGreaterThan(Date.now())
   expect(Array.from(allCookiesList[0][1].entries())).toEqual([
-    ['cookieName', { expires, name: 'cookieName', maxAge: 2, value: 'abc-123' }],
+    [
+      'cookieName',
+      { expires, name: 'cookieName', maxAge: 2, value: 'abc-123' },
+    ],
   ])
 
   // Assert the cookie can be retrieved given a matching request.
   const reqCookies = store.get(req)
   expect(Array.from(reqCookies.entries())).toEqual([
-    ['cookieName', { expires, name: 'cookieName', maxAge: 2, value: 'abc-123' }],
+    [
+      'cookieName',
+      { expires, name: 'cookieName', maxAge: 2, value: 'abc-123' },
+    ],
   ])
 })
 
-test('deletes an existing cookie when setting a cookie with the same name and expiration date in the past', () => {
+it('deletes an existing cookie when setting a cookie with the same name and expiration date in the past', () => {
   const req = new Request('https://mswjs.io')
 
-  store.add(req, new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
-  }))
+  store.add(
+    req,
+    new Response(null, {
+      headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
+    }),
+  )
 
   const date = new Date()
   date.setSeconds(date.getSeconds() - 2)
   const res = new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123; Expires=${ date.toUTCString() }` }),
+    headers: new Headers({
+      'set-cookie': `cookieName=abc-123; Expires=${date.toUTCString()}`,
+    }),
   })
 
   store.add(req, res)
@@ -158,12 +192,15 @@ test('deletes an existing cookie when setting a cookie with the same name and ex
   expect(reqCookies.size).toBe(0)
 })
 
-test('deletes an existing cookie when setting a cookie with the same name and a max age of 0', () => {
+it('deletes an existing cookie when setting a cookie with the same name and a max age of 0', () => {
   const req = new Request('https://mswjs.io')
 
-  store.add(req, new Response(null, {
-    headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
-  }))
+  store.add(
+    req,
+    new Response(null, {
+      headers: new Headers({ 'set-cookie': `cookieName=abc-123 }` }),
+    }),
+  )
 
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123; Max-Age=0' }),

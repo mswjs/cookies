@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { store, PERSISTENCY_KEY } from '../src'
 
 afterEach(() => {
@@ -5,7 +8,7 @@ afterEach(() => {
   localStorage.clear()
 })
 
-test('hydrates cookies from localStorage', () => {
+it('hydrates cookies from localStorage', () => {
   const expires = new Date(Date.now() + 1000)
   localStorage.setItem(
     PERSISTENCY_KEY,
@@ -31,7 +34,7 @@ test('hydrates cookies from localStorage', () => {
   })
 })
 
-test('persists cookies in localStorage', () => {
+it('persists cookies in localStorage', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123' }),

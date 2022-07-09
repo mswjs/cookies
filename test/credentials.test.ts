@@ -1,3 +1,6 @@
+/**
+ * @jest-environment jsdom
+ */
 import { store } from '../src'
 
 afterEach(() => {
@@ -5,7 +8,7 @@ afterEach(() => {
   store.clear()
 })
 
-test('includes only cookies with the matching origin given no "credentials"', () => {
+it('includes only cookies with the matching origin given no "credentials"', () => {
   // Emulate document cookies set by another response.
   document.cookie = 'mdn=true'
 
@@ -22,7 +25,7 @@ test('includes only cookies with the matching origin given no "credentials"', ()
   ])
 })
 
-test('includes only cookies with the matching origin given "credentials: same-origin"', () => {
+it('includes only cookies with the matching origin given "credentials: same-origin"', () => {
   // Emulate document cookies set by another response.
   document.cookie = 'mdn=true'
 
@@ -39,7 +42,7 @@ test('includes only cookies with the matching origin given "credentials: same-or
   ])
 })
 
-test('includes all cookies given "credentials: include"', () => {
+it('includes all cookies given "credentials: include"', () => {
   // Emulate document cookies set by another response.
   document.cookie = 'mdn=true'
 
@@ -57,7 +60,7 @@ test('includes all cookies given "credentials: include"', () => {
   ])
 })
 
-test('returns an empty Map given "credentials: omit"', () => {
+it('returns an empty Map given "credentials: omit"', () => {
   // Emulate document cookies set by another response.
   document.cookie = 'mdn=true'
 

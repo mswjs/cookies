@@ -24,7 +24,7 @@ function supportsLocalStorage() {
     if (localStorage == null) {
       return false
     }
-    
+
     const testKey = PERSISTENCY_KEY + '_test'
 
     localStorage.setItem(testKey, 'test')
@@ -91,6 +91,11 @@ class CookieStore {
 
     switch (request.credentials) {
       case 'include': {
+        // Support running this method in Node.js.
+        if (typeof document === 'undefined') {
+          return originCookies
+        }
+
         const documentCookies = parseCookie(document.cookie)
 
         documentCookies.forEach((cookie) => {
