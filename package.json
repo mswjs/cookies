@@ -1,7 +1,7 @@
 {
   "name": "@mswjs/cookies",
   "version": "0.2.1",
-  "description": "Virtual cookies store to manage Request/Response associations.",
+  "description": "Manage request/response cookies in the environments where those are not supported.",
   "main": "lib/index.js",
   "scripts": {
     "start": "tsc -w",

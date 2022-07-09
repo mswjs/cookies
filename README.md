@@ -2,17 +2,17 @@
 
 # Cookies
 
-Virtual cookie store for managing request/response cookies relations in a unique collection.
+Manage request/response cookies in the environments where those are not supported.
 
 ## Install
 
 ```bash
-$ npm install @mswjs/cookies
+npm install @mswjs/cookies
 ```
 
 ## API
 
-### `set(req: Request, res: Response)`
+### `set(request: Request, response: Response)`
 
 Sets the response cookies in the store associated with the given request origin.
 
@@ -27,7 +27,7 @@ store.set(
 )
 ```
 
-### `get(req: Request)`
+### `get(request: Request)`
 
 Retrieves the cookies relevant to the given request's origin.
 
@@ -59,7 +59,7 @@ Map {
 }
 ```
 
-### `deleteAll(req: Request)`
+### `deleteAll(request: Request)`
 
 Removes all the cookies associated with the given request's origin.
 
@@ -77,5 +77,4 @@ Removes all the cookies from the store, producing a nice and shiny empty store.
 
 ## Credits
 
-Original idea by [
-Christoph Guttandin](https://github.com/chrisguttandin).
+Original idea by [Christoph Guttandin](https://github.com/chrisguttandin).
