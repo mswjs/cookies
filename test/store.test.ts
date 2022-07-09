@@ -1,10 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
 import { store } from '../src'
 
 afterEach(() => {
   store.clear()
 })
 
-test('stores a given request cookies', () => {
+it('stores a given request cookies', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123' }),
@@ -28,7 +31,7 @@ test('stores a given request cookies', () => {
   ])
 })
 
-test('accumulates multiple cookies of the same request', () => {
+it('accumulates multiple cookies of the same request', () => {
   const req = new Request('https://mswjs.io')
   const firstRes = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123' }),
@@ -47,7 +50,7 @@ test('accumulates multiple cookies of the same request', () => {
   ])
 })
 
-test('returns an empty Map when given a non-matching request', () => {
+it('returns an empty Map when given a non-matching request', () => {
   const req = new Request('https://mswjs.io')
   const extraneousReq = new Request('https://mdn.com')
   const res = new Response(null, {
@@ -59,7 +62,7 @@ test('returns an empty Map when given a non-matching request', () => {
   expect(reqCookies.size).toBe(0)
 })
 
-test('deletes all cookies by a given request', () => {
+it('deletes all cookies by a given request', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123' }),
@@ -79,7 +82,7 @@ test('deletes all cookies by a given request', () => {
   expect(mdnReqCookies.size).toBe(1)
 })
 
-test('clears the entire cookie store', () => {
+it('clears the entire cookie store', () => {
   const req = new Request('https://mswjs.io')
   const res = new Response(null, {
     headers: new Headers({ 'set-cookie': 'cookieName=abc-123' }),

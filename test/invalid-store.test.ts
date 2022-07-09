@@ -1,7 +1,13 @@
+/**
+ * @jest-environment jsdom
+ */
 import { store, PERSISTENCY_KEY } from '../src'
 
-afterEach(() => jest.restoreAllMocks())
-test('should reset the store if contains an invalid value', () => {
+afterEach(() => {
+  jest.restoreAllMocks()
+})
+
+it('should reset the store if contains an invalid value', () => {
   jest.spyOn(global.console, 'warn').mockImplementation(() => {})
   localStorage.setItem(PERSISTENCY_KEY, 'not valid json')
 

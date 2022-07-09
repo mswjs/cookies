@@ -1,19 +1,7 @@
+/**
+ * @jest-environment node
+ */
 import { Store, store } from '../src'
-
-const originalLocalStorage: Storage = localStorage
-
-beforeAll(() => {
-  Object.defineProperty(window, 'localStorage', {
-    value: undefined,
-    writable: true,
-  })
-})
-
-afterAll(() => {
-  Object.defineProperty(window, 'localStorage', {
-    value: originalLocalStorage,
-  })
-})
 
 it('adds response cookies to the store even if "localStorage" is unavailable', () => {
   store.add(
