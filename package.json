@@ -3,13 +3,13 @@
   "version": "0.2.2",
   "description": "Manage request/response cookies in the environments where those are not supported.",
   "main": "lib/index.js",
-  "module": "lib/esm/index.js",
+  "module": "lib/index.mjs",
   "types": "lib/index.d.ts",
   "exports": {
     ".": {
       "types": "./lib/index.d.ts",
       "require": "./lib/index.js",
-      "default": "./lib/esm/index.js"
+      "default": "./lib/index.mjs"
     }
   },
   "scripts": {
