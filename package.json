@@ -41,6 +41,7 @@
     "commitizen": "^4.2.4",
     "cz-conventional-changelog": "^3.3.0",
     "jest": "^26.6.3",
+    "jest-environment-miniflare": "^2.14.1",
     "rimraf": "^3.0.2",
     "set-cookie-parser": "^2.4.6",
     "simple-git-hooks": "^2.7.0",

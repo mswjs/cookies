@@ -1,7 +1,7 @@
 import { Cookie, parse as parseCookie } from 'set-cookie-parser'
 
 interface RequestLike {
-  credentials: Request['credentials']
+  credentials?: Request['credentials']
   url: string
 }
 
@@ -49,8 +49,14 @@ class CookieStore {
    * Respects the `request.credentials` policy.
    */
   add(request: RequestLike, response: ResponseLike): void {
-    if (request.credentials === 'omit') {
-      return
+    try {
+      if (request.credentials === 'omit') {
+        return
+      }
+    } catch {
+      // Ignore errors thrown by `request.credentials` access, such as those in cloudflare workers
+      // We can't just check that `credentials` is in request, because it is in cloudflare workers test environment
+      // however access throws an error
     }
 
     const requestUrl = new URL(request.url)
@@ -89,28 +95,35 @@ class CookieStore {
     const originCookies =
       this.store.get(requestUrl.origin) || new Map<string, Cookie>()
 
-    switch (request.credentials) {
-      case 'include': {
-        // Support running this method in Node.js.
-        if (typeof document === 'undefined') {
+    try {
+      switch (request.credentials) {
+        case 'include': {
+          // Support running this method in Node.js.
+          if (typeof document === 'undefined') {
+            return originCookies
+          }
+
+          const documentCookies = parseCookie(document.cookie)
+
+          documentCookies.forEach((cookie) => {
+            originCookies.set(cookie.name, cookie)
+          })
+
           return originCookies
         }
 
-        const documentCookies = parseCookie(document.cookie)
+        case 'same-origin': {
+          return originCookies
+        }
 
-        documentCookies.forEach((cookie) => {
-          originCookies.set(cookie.name, cookie)
-        })
-
-        return originCookies
+        default:
+          return new Map()
       }
-
-      case 'same-origin': {
-        return originCookies
-      }
-
-      default:
-        return new Map()
+    } catch {
+      // Ignore errors thrown by `request.credentials` access, such as those in cloudflare workers
+      // We can't just check that `credentials` is in request, because it is in cloudflare workers test environment
+      // however access throws an error
+      return originCookies
     }
   }
 
