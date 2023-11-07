@@ -38,9 +38,12 @@ function supportsLocalStorage() {
 }
 
 /**
- * Checks if the given object property is accessible.
- * Ensures that the property exists and that accessing it
- * does not throw
+ * Checks that accessing a given property on an object
+ * by name does not throw an error.
+ *
+ * This is generally used to avoid issues in environments
+ * like `miniflare` where some properties are defined as getters
+ * where accessing that property throws directly.
  */
 function isPropertyAccessible<Obj extends Record<string, any>>(
   object: Obj,
