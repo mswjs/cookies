@@ -1,5 +1,6 @@
 /**
  * @jest-environment miniflare
+ * @jest-environment-options {"scriptPath": "src/index.ts"}
  */
 import { store } from '../src'
 

@@ -37,6 +37,23 @@ function supportsLocalStorage() {
   }
 }
 
+/**
+ * Checks if the given object property is accessible.
+ * Ensures that the property exists and that accessing it
+ * does not throw
+ */
+function isPropertyAccessible<Obj extends Record<string, any>>(
+  object: Obj,
+  method: keyof Obj,
+) {
+  try {
+    object[method]
+    return true
+  } catch {
+    return false
+  }
+}
+
 class CookieStore {
   private store: Store
 
@@ -49,14 +66,11 @@ class CookieStore {
    * Respects the `request.credentials` policy.
    */
   add(request: RequestLike, response: ResponseLike): void {
-    try {
-      if (request.credentials === 'omit') {
-        return
-      }
-    } catch {
-      // Ignore errors thrown by `request.credentials` access, such as those in cloudflare workers
-      // We can't just check that `credentials` is in request, because it is in cloudflare workers test environment
-      // however access throws an error
+    if (
+      isPropertyAccessible(request, 'credentials') &&
+      request.credentials === 'omit'
+    ) {
+      return
     }
 
     const requestUrl = new URL(request.url)
@@ -95,35 +109,32 @@ class CookieStore {
     const originCookies =
       this.store.get(requestUrl.origin) || new Map<string, Cookie>()
 
-    try {
-      switch (request.credentials) {
-        case 'include': {
-          // Support running this method in Node.js.
-          if (typeof document === 'undefined') {
-            return originCookies
-          }
-
-          const documentCookies = parseCookie(document.cookie)
-
-          documentCookies.forEach((cookie) => {
-            originCookies.set(cookie.name, cookie)
-          })
-
-          return originCookies
-        }
-
-        case 'same-origin': {
-          return originCookies
-        }
-
-        default:
-          return new Map()
-      }
-    } catch {
-      // Ignore errors thrown by `request.credentials` access, such as those in cloudflare workers
-      // We can't just check that `credentials` is in request, because it is in cloudflare workers test environment
-      // however access throws an error
+    if (!isPropertyAccessible(request, 'credentials')) {
       return originCookies
+    }
+
+    switch (request.credentials) {
+      case 'include': {
+        // Support running this method in Node.js.
+        if (typeof document === 'undefined') {
+          return originCookies
+        }
+
+        const documentCookies = parseCookie(document.cookie)
+
+        documentCookies.forEach((cookie) => {
+          originCookies.set(cookie.name, cookie)
+        })
+
+        return originCookies
+      }
+
+      case 'same-origin': {
+        return originCookies
+      }
+
+      default:
+        return new Map()
     }
   }
 
