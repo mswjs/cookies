@@ -1,7 +1,7 @@
 import { Cookie, parse as parseCookie } from 'set-cookie-parser'
 
 interface RequestLike {
-  credentials?: Request['credentials']
+  credentials: Request['credentials']
   url: string
 }
 
