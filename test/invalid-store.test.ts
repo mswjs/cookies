@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { mocked } from 'ts-jest/utils'
 import { store, PERSISTENCY_KEY } from '../src'
 
 afterEach(() => {
@@ -11,7 +10,7 @@ afterEach(() => {
 it('should reset the store if contains an invalid value', () => {
   jest.spyOn(global.console, 'warn').mockImplementation(() => {})
   localStorage.setItem(PERSISTENCY_KEY, 'not valid json')
-  const mockConsole = mocked(global.console.warn)
+  const mockConsole = jest.mocked(global.console.warn)
   expect(() => store.hydrate()).not.toThrow()
   expect(localStorage.getItem(PERSISTENCY_KEY)).toBeNull()
   const errorMessage = mockConsole.mock.calls[0][0]
