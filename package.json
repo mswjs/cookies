@@ -35,7 +35,7 @@
   "devDependencies": {
     "@commitlint/cli": "^16.0.3",
     "@commitlint/config-conventional": "^16.0.0",
-    "@ossjs/release": "^0.2.1",
+    "@ossjs/release": "^0.8.0",
     "@types/jest": "^29.5.7",
     "@types/set-cookie-parser": "^2.4.5",
     "commitizen": "^4.2.4",
