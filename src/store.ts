@@ -37,6 +37,26 @@ function supportsLocalStorage() {
   }
 }
 
+/**
+ * Checks that accessing a given property on an object
+ * by name does not throw an error.
+ *
+ * This is generally used to avoid issues in environments
+ * like `miniflare` where some properties are defined as getters
+ * where accessing that property throws directly.
+ */
+function isPropertyAccessible<Obj extends Record<string, any>>(
+  object: Obj,
+  method: keyof Obj,
+) {
+  try {
+    object[method]
+    return true
+  } catch {
+    return false
+  }
+}
+
 class CookieStore {
   private store: Store
 
@@ -49,7 +69,10 @@ class CookieStore {
    * Respects the `request.credentials` policy.
    */
   add(request: RequestLike, response: ResponseLike): void {
-    if (request.credentials === 'omit') {
+    if (
+      isPropertyAccessible(request, 'credentials') &&
+      request.credentials === 'omit'
+    ) {
       return
     }
 
@@ -88,6 +111,10 @@ class CookieStore {
     const requestUrl = new URL(request.url)
     const originCookies =
       this.store.get(requestUrl.origin) || new Map<string, Cookie>()
+
+    if (!isPropertyAccessible(request, 'credentials')) {
+      return originCookies
+    }
 
     switch (request.credentials) {
       case 'include': {
